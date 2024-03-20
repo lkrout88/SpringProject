@@ -27,7 +27,7 @@ import java.util.List;
         }
 
         @PostMapping("/seller")
-        public ResponseEntity<Object> postCarEndpoint(@RequestBody Seller seller) {
+        public ResponseEntity<Object> postSellerEndpoint(@RequestBody Seller seller) {
             sellerService.insertSeller(seller);
             try {
                 return new ResponseEntity<>(seller, HttpStatus.CREATED);

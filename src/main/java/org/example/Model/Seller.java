@@ -1,52 +1,40 @@
 package org.example.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.List;
 import java.util.Objects;
 
 
 
 @Entity
+
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
     public class Seller {
+    public String getSellerName() {
+        return sellerName;
+    }
 
-@Id
-        public String sellerName;
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
 
-        public Seller(){
+    public List<Product> getProducts() {
+        return Products;
+    }
 
-        }
+    public void setProducts(List<Product> products) {
+        Products = products;
+    }
 
-        public Seller(String sellerName){
-            this.sellerName= sellerName;
-        }
+    @Id
+public String sellerName;
+@OneToMany
+@JoinColumn(name="sellerName_fk")
+    public List<Product> Products;
 
-        public String getSellerName() {
-            return sellerName;
-        }
-
-        public void setSellerName(String sellerName) {
-            this.sellerName = sellerName;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(sellerName);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            org.example.Model.Seller seller = (org.example.Model.Seller) o;
-            return Objects.equals(sellerName, seller.sellerName);
-
-        }
-
-        @Override
-        public String toString() {
-            return "Seller{" +
-                    "sellerName='" + sellerName + '\'' +
-                    '}';
-        }
 }
