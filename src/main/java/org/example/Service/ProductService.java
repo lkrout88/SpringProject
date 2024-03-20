@@ -3,14 +3,19 @@ import org.example.Exception.SellerNotFoundException;
 import org.example.Model.Product;
 import org.example.Model.Seller;
 import org.example.Repository.ProductRepository;
+import org.example.Repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ProductService {
+    SellerRepository sellerRepository;
     ProductRepository productRepository;
     @Autowired
-    public ProductService(ProductRepository productRepository){
+    public ProductService(SellerRepository sellerRepository, ProductRepository productRepository){
+        this.sellerRepository = sellerRepository;
         this.productRepository = productRepository;
     }
     SellerService sellerService;
@@ -26,43 +31,40 @@ public class ProductService {
 
 
     //Below method will return true- if the seller is already in the database-
-    public boolean checkSellerNameExists(Product p)
-            throws SellerNotFoundException {
-        if (p.productName == null || p.productName.isEmpty() || p.getSeller().getSellerName() == null || p.getSeller().getSellerName().isEmpty() || p.productPrice <= 0) {
+    public Seller checkSellerNameExists(Product product, String sellerName) throws SellerNotFoundException {
+        Seller seller = null;
+        if (product.productName == null || product.productName.isEmpty() || sellerName == null || sellerName.isEmpty() || product.productPrice <= 0) {
             throw new SellerNotFoundException("Product Name and Seller Name cannot be blank an Product Price must be > 0");
         }
         // sellerService = new SellerService();
         //List<Seller> sellerList = sellerService.getAllSeller();
-        List<Seller> existingSeller = sellerService.getAllSeller();
+        List<Seller> existingSeller = sellerRepository.findAll();
         //System.out.println("seller list" + sellerList.size());
         for (int i = 0; i < existingSeller.size(); i++) {
-            if (p.getSeller().sellerName.equals(existingSeller.get(i).sellerName)) {
+            if (sellerName.equals(existingSeller.get(i).sellerName)) {
                 /*long id = (long) (Math.random() * Long.MAX_VALUE);
                 p.setProductId(id);
                 productList.add(p);
              */
-                return true;
+                seller = existingSeller.get(i);
             }
         }
-        return false;
-
+        return seller;
     }
 
     //this method will check the value (true or false returned from the checkSellerNameExists method before adding the product
     public Product insertProduct(Product p, String sellerName) throws SellerNotFoundException {
         //Main.log.info("ADD: Attempting to add a Product:");
-        boolean sellerExists = checkSellerNameExists(p);
+        Seller sellerExists = checkSellerNameExists(p, sellerName);
         //System.out.println(sellerExists);
         // 201 - resource created
         // List<Product> productList = new ArrayList<>();
-        if (sellerExists) {
-
-
-            int id = (int) (Math.random() * Integer.MAX_VALUE);
-            p.setProductId(id);
+        if (sellerExists != null) {
+            p.setSeller(sellerExists);
             productRepository.save(p);
+            sellerExists.getProducts().add(p);
+            sellerRepository.save(sellerExists);
             //if productService returns false then do the rest
-
         } else {
             //Main.log.warn("ADD: Seller does not exist" + p.sellerName);
             throw new SellerNotFoundException("SellerName must exist in Seller database");

@@ -1,5 +1,6 @@
 package org.example.Controller;
 
+import org.example.Exception.SellerNotFoundException;
 import org.example.Model.Seller;
 import org.example.Service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import java.util.List;
         }
 
         @PostMapping("/seller")
-        public ResponseEntity<Object> postSellerEndpoint(@RequestBody Seller seller) {
+        public ResponseEntity<Object> postSellerEndpoint(@RequestBody Seller seller) throws SellerNotFoundException {
             sellerService.insertSeller(seller);
             try {
                 return new ResponseEntity<>(seller, HttpStatus.CREATED);
