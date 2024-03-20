@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Objects;
 @Entity
 @Getter
 @Setter
@@ -18,11 +17,10 @@ public class Product {
     public int productId;
     public String productName;
     public double productPrice;
-    @JsonIgnore
-    @ManyToOne
-    @JsonIgnoreProperties("Products")
-    public Seller seller;
 
+    @ManyToOne
+    @JsonIgnoreProperties("products")
+    public Seller seller;
 }
 
 

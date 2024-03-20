@@ -29,11 +29,11 @@ import java.util.List;
 
         @PostMapping("/seller")
         public ResponseEntity<Object> postSellerEndpoint(@RequestBody Seller seller) throws SellerNotFoundException {
-            sellerService.insertSeller(seller);
             try {
+                sellerService.insertSeller(seller);
                 return new ResponseEntity<>(seller, HttpStatus.CREATED);
             } catch (Exception e) {
-                return new ResponseEntity<>("Invalid Seller request", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Invalid Seller Request", HttpStatus.BAD_REQUEST);
             }
         }
     }

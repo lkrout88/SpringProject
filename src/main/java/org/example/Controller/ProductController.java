@@ -1,17 +1,14 @@
 package org.example.Controller;
 
-import org.example.Exception.SellerNotFoundException;
+import org.example.Exception.*;
 import org.example.Model.Product;
-import org.example.Model.Seller;
 import org.example.Service.ProductService;
-import org.example.Service.SellerService;
-import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 
     @CrossOrigin
@@ -30,28 +27,51 @@ import java.util.List;
             return new ResponseEntity<>(product, HttpStatus.OK);
         }
 
+        @GetMapping("/product/{id}")
+        public ResponseEntity<Product> getProductByIdEndpoint(@PathVariable int id) {
+            Product product = null;
+            try {
+                product = productService.getProductById(id);
+                return new ResponseEntity<>(product, HttpStatus.OK);
+            } catch (ProductNotFoundException e) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        }
+
         @PostMapping("/seller/{sellerName}/product")
         public ResponseEntity<Object> postProductEndpoint(@RequestBody Product product, @PathVariable String sellerName) throws SellerNotFoundException {
-            productService.insertProduct(product, sellerName);
             try {
+                productService.insertProduct(product, sellerName);
                 return new ResponseEntity<>(product, HttpStatus.CREATED);
+            } catch (SellerNotFoundException e) {
+                return new ResponseEntity<>("Seller Not Found", HttpStatus.NOT_FOUND);
             } catch (Exception e) {
-                return new ResponseEntity<>("Invalid Product request", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Invalid Product Request", HttpStatus.BAD_REQUEST);
             }
         }
 
         @DeleteMapping("/product/{id}")
-        public ResponseEntity deleteProductEndpoint(@RequestBody int productId){
-            productService.deleteProduct(productId);
-            return new ResponseEntity<>(HttpStatus.OK);
-
+        public ResponseEntity deleteProductByIdEndpoint(@PathVariable int id) {
+            try {
+                productService.deleteProduct(id);
+                return new ResponseEntity<>("Product Deleted!",HttpStatus.OK);
+            } catch (ProductNotFoundException e) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
         }
-/*
-        @PostMapping("product/{id}")
-        public ResponseEntity updateProductEndpoint(@RequestBody int id, Product updatedProduct){
-            productService.updateProduct/(updatedProduct);
-            return new ResponseEntity<>(HttpStatus.OK);
-      }
-      */
 
+        @PutMapping("/seller/{sellerName}/product/{id}")
+        public ResponseEntity<Object> updateProductEndpoint(@PathVariable int id, @PathVariable String sellerName, @RequestBody Product product){
+            int i =2;
+            try {
+                Product newProduct = productService.updateProduct(id, product, sellerName);
+                return new ResponseEntity<>(newProduct, HttpStatus.OK);
+            } catch (ProductNotFoundException e) {
+                return new ResponseEntity<>("Product Not Found", HttpStatus.NOT_FOUND);
+            } catch (SellerNotFoundException e) {
+                return new ResponseEntity<>("Seller Not Found", HttpStatus.NOT_FOUND);
+            } catch (SellerException e) {
+                return new ResponseEntity<>("Invalid Seller Request", HttpStatus.NOT_FOUND);
+            }
+        }
 }
