@@ -26,7 +26,7 @@ public class ProductService {
     public Seller checkSellerNameExists(Product product, String sellerName) throws SellerException {
         Main.log.info("CHECK: Attempting to check if a Seller exists.");
         if (product.productName == null || product.productName.isEmpty() || sellerName == null || sellerName.isEmpty() || product.productPrice <= 0) {
-            Main.log.warn("CHECK: Incorrect Product input from user.");
+            Main.log.warn("CHECK: Product Name and Seller Name cannot be blank and Product Price must be > 0.");
             throw new SellerException("Product Name and Seller Name cannot be blank and Product Price must be > 0.");
         }
         List<Seller> sellerList = sellerRepository.findBySellerName(sellerName);
