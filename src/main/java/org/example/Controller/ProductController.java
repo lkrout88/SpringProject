@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-
     @CrossOrigin
     @RestController
     public class ProductController {
@@ -62,7 +61,6 @@ import java.util.*;
 
         @PutMapping("/seller/{sellerName}/product/{id}")
         public ResponseEntity<Object> updateProductEndpoint(@PathVariable int id, @PathVariable String sellerName, @RequestBody Product product){
-            int i =2;
             try {
                 Product newProduct = productService.updateProduct(id, product, sellerName);
                 return new ResponseEntity<>(newProduct, HttpStatus.OK);

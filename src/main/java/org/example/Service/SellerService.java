@@ -1,5 +1,6 @@
 package org.example.Service;
 
+import org.example.Exception.SellerException;
 import org.example.Exception.SellerNotFoundException;
 import org.example.Main;
 import org.example.Model.*;
@@ -19,14 +20,20 @@ import java.util.List;
         }
 
         public List<Seller> getAllSeller(){
+            Main.log.info("GET: Attempting to get all Sellers.");
             return sellerRepository.findAll();
         }
 
-        public Seller insertSeller (Seller seller) throws SellerNotFoundException {
-            //Main.log.info("ADD:  Attempting to add a Seller:" + seller.sellerName);
+        public Seller insertSeller (Seller seller) throws SellerNotFoundException, SellerException {
+            Main.log.info("ADD: Attempting to add a Seller: " + seller.sellerName);
             List<Seller> existingSeller = sellerRepository.findBySellerName(seller.getSellerName());
             if (!existingSeller.isEmpty()) {
-                throw new SellerNotFoundException("Seller already exists");
+                Main.log.warn("ADD: Seller already exists.");
+                throw new SellerNotFoundException("Seller already exists.");
+            }
+            else if (seller.getSellerName() == null || seller.getSellerName().isEmpty()) {
+                Main.log.warn("ADD: Incorrect Seller input from user.");
+                throw new SellerException("Seller Name cannot be blank.");
             }
             return sellerRepository.save(seller);
         }

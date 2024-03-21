@@ -19,6 +19,7 @@ public class Product {
     public double productPrice;
 
     @ManyToOne
+    @JoinColumn(name="product_fk")
     @JsonIgnoreProperties("products")
     public Seller seller;
 }
